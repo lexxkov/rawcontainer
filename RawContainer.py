@@ -8,11 +8,12 @@ class RawContainerWriter:
     """Writes frame sequence in MaxInspect RawData format"""
 
     def __init__(self, baseFilename):
-        pass
+        self.baseFilename = baseFilename
+        self.iniConfig = None
 
     @property
     def config(self):
-        pass
+        return self.iniConfig
 
     def open(self, width, height):
         self.datFn = self.baseFilename + ".dat"
@@ -29,10 +30,10 @@ class RawContainerWriter:
         self._saveConfig()
 
     def writeFrame(self, im):
-        pass
-
+        # self.datFile.write(im.tobytes())
+        im.tofile(self.datFile)
     def writeFrameBytes(self, buff):
-        pass
+        self.datFile.write(buff)
 
     def addParam(self, section, paramName, paramVal):
         if not section in self.iniConfig.sections():
@@ -80,9 +81,6 @@ class RawContainerReader:
     def close(self):
         self.datFile.close()
 
-    def readNextFrame(self):
-        pass
-
     def readFrame(self, frameNum):
         if frameNum >= self.frameCount:
             return None
@@ -91,11 +89,12 @@ class RawContainerReader:
         return np.frombuffer(bytes, "uint8", self.frameSize).reshape(self.height, self.width)
 
     def readNextFrame(self):
-        self.currentFrame +=1
+
         if self.currentFrame >= self.frameCount:
             return None
         self.datFile.seek(self.currentFrame * self.frameSize)
         bytes = self.datFile.read(self.frameSize)
+        self.currentFrame +=1
         return np.frombuffer(bytes, "uint8", self.frameSize).reshape(self.height, self.width)
 
 class SurfaceReader:
