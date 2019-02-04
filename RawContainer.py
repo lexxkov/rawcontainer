@@ -7,15 +7,17 @@ import numpy as np
 class RawContainerWriter:
     """Writes frame sequence in MaxInspect RawData format"""
 
-    def __init__(self, baseFilename):
+    def __init__(self, baseFilename, width, height):
         self.baseFilename = baseFilename
+        self.width = width
+        self.height = height
         self.iniConfig = None
 
     @property
     def config(self):
         return self.iniConfig
 
-    def open(self, width, height):
+    def open(self):
         self.datFn = self.baseFilename + ".dat"
         self.iniFn = self.baseFilename + ".dat.ini"
         self.datFile = open(self.datFn, "wb")
@@ -25,13 +27,23 @@ class RawContainerWriter:
         self.iniConfig.add_section('Datasource')
         self.iniConfig.set('Datasource', 'Type', 'RawFrameSequence')
         self.iniConfig.add_section('System')
-        self.iniConfig.set('System', 'Width', width)
-        self.iniConfig.set('System', 'Height', height)
+        self.iniConfig.set('System', 'Width', self.width)
+        self.iniConfig.set('System', 'Height', self.height)
         self._saveConfig()
 
-    def writeFrame(self, im):
+    def writeFrame(self, im, x1, x2, y1, y2):
         # self.datFile.write(im.tobytes())
-        im.tofile(self.datFile)
+        if (x2-x1!=self.width) or (y2-y1!=self.height):
+            x1 = 0
+            x2 = self.width
+            y1 = 0
+            y2 = self.height
+        im[y1:y2,x1:x2].tofile(self.datFile)
+
+    # def writeFramecut(self, im, x1=0, y1=0, x2=self.width, y2=self.height):
+    #     # self.datFile.write(im.tobytes())
+    #     im[x1:x2, y1:y2].tofile(self.datFile)
+
     def writeFrameBytes(self, buff):
         self.datFile.write(buff)
 
@@ -42,7 +54,7 @@ class RawContainerWriter:
         self._saveConfig()
 
     def close(self):
-        pass
+        self.datFile.close()
 
     def _saveConfig(self):
         cfgfile = open(self.iniFn, 'w')
