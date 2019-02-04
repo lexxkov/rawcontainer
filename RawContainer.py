@@ -7,17 +7,15 @@ import numpy as np
 class RawContainerWriter:
     """Writes frame sequence in MaxInspect RawData format"""
 
-    def __init__(self, baseFilename, width, height):
+    def __init__(self, baseFilename):
         self.baseFilename = baseFilename
-        self.width = width
-        self.height = height
         self.iniConfig = None
 
     @property
     def config(self):
         return self.iniConfig
 
-    def open(self):
+    def open(self, width, height):
         self.datFn = self.baseFilename + ".dat"
         self.iniFn = self.baseFilename + ".dat.ini"
         self.datFile = open(self.datFn, "wb")
@@ -27,18 +25,14 @@ class RawContainerWriter:
         self.iniConfig.add_section('Datasource')
         self.iniConfig.set('Datasource', 'Type', 'RawFrameSequence')
         self.iniConfig.add_section('System')
-        self.iniConfig.set('System', 'Width', self.width)
-        self.iniConfig.set('System', 'Height', self.height)
+        self.iniConfig.set('System', 'Width', width)
+        self.iniConfig.set('System', 'Height', height)
         self._saveConfig()
 
-    def writeFrame(self, im, x1, x2, y1, y2):
+    def writeFrame(self, im):
         # self.datFile.write(im.tobytes())
-        if (x2-x1!=self.width) or (y2-y1!=self.height):
-            x1 = 0
-            x2 = self.width
-            y1 = 0
-            y2 = self.height
-        im[y1:y2,x1:x2].tofile(self.datFile)
+        im.tofile(self.datFile)
+
 
     # def writeFramecut(self, im, x1=0, y1=0, x2=self.width, y2=self.height):
     #     # self.datFile.write(im.tobytes())
@@ -154,5 +148,28 @@ class SurfaceReader:
         return np.frombuffer(bytes, "float64", self.frameSize).reshape(self.height, self.width)
 
 
-def spliceRawData(inPath, outPath, shiftX, shiftY, width, height):
-    pass
+def sliceRawData(inPath, outPath, shiftX, shiftY, width, height):
+
+    Fin=RawContainerReader(inPath)
+    Fin.open()
+    if (width + shiftX <= Fin.width) and (height + shiftY <= Fin.height):
+        Fout = RawContainerWriter(outPath)
+        Fout.open(width, height)
+        while Fin.currentFrame < Fin.frameCount:
+            simpleImagein = Fin.readNextFrame()  # single frame with number 0
+           # print simpleImage.size, simpleImage.dtype, simpleImage.itemsize
+          # Fout.writeFrameBytes(simpleImage)
+            simpleImageout = simpleImagein[shiftY:height+shiftY, shiftX:width+shiftX]
+            Fout.writeFrame(simpleImageout)
+        Fin.close()
+        Fout.close()
+    else:
+        print "The size of the output frame is larger than the size of the input frame"
+
+
+# if (x2 - x1 != self.width) or (y2 - y1 != self.height):
+#     x1 = 0
+#     x2 = self.width
+#     y1 = 0
+#     y2 = self.height
+# im[y1:y2, x1:x2].tofile(self.datFile)
