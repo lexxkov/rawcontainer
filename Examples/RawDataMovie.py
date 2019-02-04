@@ -12,7 +12,7 @@ matplotlib.use("TkAgg")  # this is for Ubuntu
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 
-filePath = '/home/alex/PythonTasks/rawcontainer/RAW/Opt_Flat_st/ScanRawData'
+filePath = '/home/alex/PythonTasks/rawcontainer/RAW/Opt_Flat_st/ScanRawData2'
 reader = RawContainerReader(filePath)
 reader.open()
 width = reader.width
@@ -25,7 +25,7 @@ fig = plt.figure()
 im = plt.imshow(simpleImage, cmap='Greys')
 
 def updatefig(*args):
-    if reader.currentFrame < reader.frameCount-1 :
+    if reader.currentFrame < reader.frameCount :
         arry = reader.readNextFrame()
         im.set_array(arry)
         print reader.currentFrame
