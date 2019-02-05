@@ -21,6 +21,16 @@ for i in range(len(lines)):
                 value=lines[i][j+1:]
                 params[key] = value
     D[sname] = params
+Dout=D.copy()
+keys=Dout.keys()
+print keys
+for k in keys:
+    Fout.write("["+k+"]"+"\n")
+    params=D.get(k)
+    pkeys=params.keys()
+    for k2 in pkeys:
+        Fout.write(k2+"="+params.get(k2)+"\n")
+    Fout.write("\n")
 
 Fin.close()
 Fout.close()
