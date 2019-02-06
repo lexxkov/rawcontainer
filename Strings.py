@@ -34,8 +34,8 @@ def string_after(str1,str2, case_sensitive = True):
     return S
 
 
-str1 = "aaabbbaaaaaaaBbbaaaaa"
-str2 = "Bbb"
-
-print string_before(str1,str2,False)
-print string_after(str1,str2,False)
+# str1 = "aaabbbaaaaaaaBbbaaaaa"
+# str2 = "Bbb"
+#
+# print string_before(str1,str2,False)
+# print string_after(str1,str2,False)

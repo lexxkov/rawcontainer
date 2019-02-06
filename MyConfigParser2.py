@@ -1,42 +1,36 @@
 from Strings import *
-filePath = '/home/alex/PythonTasks/rawcontainer/RAW/Opt_Flat_st/ScanRawData.dat.ini'
-filePath_1 = '/home/alex/PythonTasks/rawcontainer/RAW/Opt_Flat_st/ScanRawData_1.dat.ini'
 
-Fin = open(filePath, 'r')
-Fout = open(filePath_1, 'w')
-lines = Fin.readlines()
-D={}
-params={}
-for i in range(len(lines)):
-    lines[i] = lines[i].strip()
-    if "[" in lines[i]:
-        params = {}
-        sname = string_before(lines[i],"]")
-        sname = string_after(sname,"[")
+def readIniFile(filePath):
+    Fin = open(filePath, 'r')
+    D={}
+    D1={}
+    for l in Fin:
+        l = l.strip()
+        if "[" in l:
+            D1 = {}
+            sname = string_before(l,"]")
+            sname = string_after(sname,"[")
 
-        continue
-    if "=" in lines[i]:
-        key = string_before(lines[i],"=")
-        value = string_after(lines[i], "=")
-        params[key] = value
+            continue
+        if "=" in l:
+            key = string_before(l,"=")
+            value = string_after(l, "=")
+            D1[key] = value
 
-    D[sname] = params
+        D[sname] = D1
+    Fin.close()
+    return D
 
-Dout=D.copy()
-keys=Dout.keys()
-print keys
-for k in keys:
-    Fout.write("["+k+"]"+"\n")
-    params=D.get(k)
-    pkeys=params.keys()
-    for k2 in pkeys:
-        Fout.write(k2+"="+params.get(k2)+"\n")
-    Fout.write("\n")
+def writeIniFile(filePath, D):
+    Fout = open(filePath, 'w')
+    for k in D.keys():
+        Fout.write("["+k+"]"+"\n")
+        D1=D.get(k)
+        for k2 in D1.keys():
+            Fout.write(k2+"="+D1.get(k2)+"\n")
+        Fout.write("\n")
+    Fout.close()
 
-Fin.close()
-Fout.close()
-
-print D
 
 
 
