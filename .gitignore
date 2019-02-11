@@ -1,0 +1,7 @@
+.idea
+/dist
+/build
+/RAW
+*.pyc
+*.img
+*.rpd
