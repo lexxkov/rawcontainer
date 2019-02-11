@@ -2,15 +2,15 @@ from RawContainer import *
 import matplotlib.pyplot as plt
 
 
-x1 = 50
-x2 = 200
-y1 = 0
-y2 = 296
+x1 = 175
+x2 = 575
+y1 = 175
+y2 = 575
 width2 = x2 - x1
 height2 = y2 - y1
 
 
-filePath = '/home/alex/PythonTasks/rawcontainer/RAW/Opt_Flat_st/ScanRawData'
+filePath = '/home/alex/PythonTasks/rawcontainer/RAW/SMA/ScanRawData'
 Fin = RawContainerReader(filePath)
 Fin.open()
 

@@ -47,6 +47,13 @@ class RawContainerWriter:
         self.iniConfig.set(section, paramName, paramVal)
         self._saveConfig()
 
+    def iniClone (self, iniConfig):
+        for section in iniConfig.sections():
+            for item in iniConfig.items(section):
+                self.addParam(section, item[0], item[1])
+        #         self.iniConfig.set(section, item)
+        # self._saveConfig()
+
     def close(self):
         self.datFile.close()
 
@@ -155,6 +162,10 @@ def sliceRawData(inPath, outPath, shiftX, shiftY, width, height):
     if (width + shiftX <= Fin.width) and (height + shiftY <= Fin.height):
         Fout = RawContainerWriter(outPath)
         Fout.open(width, height)
+        Fout.iniClone(Fin.iniConfig)
+        Fout.iniConfig.set('System', 'Width', width)
+        Fout.iniConfig.set('System', 'Height', height)
+        Fout.saveConfig()
         while Fin.currentFrame < Fin.frameCount:
             simpleImagein = Fin.readNextFrame()  # single frame with number 0
            # print simpleImage.size, simpleImage.dtype, simpleImage.itemsize

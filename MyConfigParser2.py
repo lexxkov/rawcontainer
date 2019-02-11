@@ -11,7 +11,6 @@ def readIniFile(filePath):
             sname = string_before(l,"]")
             sname = string_after(sname,"[")
 
-            continue
         if "=" in l:
             key = string_before(l,"=")
             value = string_after(l, "=")
@@ -26,8 +25,8 @@ def writeIniFile(filePath, D):
     for k in D.keys():
         Fout.write("["+k+"]"+"\n")
         D1=D.get(k)
-        for k2 in D1.keys():
-            Fout.write(k2+"="+D1.get(k2)+"\n")
+        for k1 in D1.keys():
+            Fout.write(k1+"="+D1.get(k1)+"\n")
         Fout.write("\n")
     Fout.close()
 

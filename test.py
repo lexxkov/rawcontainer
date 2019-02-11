@@ -1,7 +1,7 @@
 from RawContainer import *
 import matplotlib.pyplot as plt
 
-filePath = '/home/alex/PythonTasks/rawcontainer/RAW/Opt_Flat_st/ScanRawData'
+filePath = '/home/alex/PythonTasks/rawcontainer/RAW/SMA/ScanRawData'
 Fin = RawContainerReader(filePath)
 Fin.open()
 
@@ -10,7 +10,10 @@ height = Fin.height
 
 Fout = RawContainerWriter(filePath+"1")
 Fout.open(width, height)
-
+Fout.iniClone(Fin.iniConfig)
+Fout.iniConfig.set('System', 'Width', width)
+Fout.iniConfig.set('System', 'Height', height)
+Fout.saveConfig()
 while Fin.currentFrame < Fin.frameCount:
     simpleImage = Fin.readNextFrame() # single frame with number 0
     Fout.writeFrame(simpleImage)
